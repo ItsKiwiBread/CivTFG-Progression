@@ -1,6 +1,6 @@
-package net.itskwibread.civtfg_progression.item;
+package net.itskiwibread.civtfg_progression.item;
 
-import net.itskwibread.civtfg_progression.CivTFG_Progression;
+import net.itskiwibread.civtfg_progression.CivTFG_Progression;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;

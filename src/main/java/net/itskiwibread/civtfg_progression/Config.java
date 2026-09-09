@@ -1,4 +1,4 @@
-package net.itskwibread.civtfg_progression;
+package net.itskiwibread.civtfg_progression;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;

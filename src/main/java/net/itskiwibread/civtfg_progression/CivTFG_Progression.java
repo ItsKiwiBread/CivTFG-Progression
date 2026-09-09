@@ -1,8 +1,8 @@
-package net.itskwibread.civtfg_progression;
+package net.itskiwibread.civtfg_progression;
 
 import com.mojang.logging.LogUtils;
-import net.itskwibread.civtfg_progression.item.ModCreativeModeTabs;
-import net.itskwibread.civtfg_progression.item.ModItems;
+import net.itskiwibread.civtfg_progression.item.ModCreativeModeTabs;
+import net.itskiwibread.civtfg_progression.item.ModItems;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
