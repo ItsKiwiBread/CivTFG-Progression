@@ -1,6 +1,6 @@
-package net.itskwibread.civtfg_progression.item;
+package net.itskiwibread.civtfg_progression.item;
 
-import net.itskwibread.civtfg_progression.CivTFG_Progression;
+import net.itskiwibread.civtfg_progression.CivTFG_Progression;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;

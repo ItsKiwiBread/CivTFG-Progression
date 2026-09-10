@@ -1,6 +1,7 @@
-package net.itskwibread.civtfg_progression.item;
+package net.itskiwibread.civtfg_progression.item;
 
-import net.itskwibread.civtfg_progression.CivTFG_Progression;
+import net.itskiwibread.civtfg_progression.CivTFG_Progression;
+import net.itskiwibread.civtfg_progression.block.ModBlocks;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -14,9 +15,10 @@ public class ModCreativeModeTabs {
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, CivTFG_Progression.MOD_ID);
 
     public static final RegistryObject<CreativeModeTab> CIVTFG_PROGRESSION_TAB = CREATIVE_MODE_TABS.register("civtfg_progression_tab",
-            () -> CreativeModeTab.builder().icon(() -> new ItemStack(ModItems.SAPPHIRE.get()))
+            () -> CreativeModeTab.builder().icon(() -> new ItemStack(ModBlocks.LABORATORY_BLOCK.get()))
                     .title(Component.translatable("creativetab.civtfg_progression_tab"))
                     .displayItems((pParameters, pOutput) -> {
+                        pOutput.accept(ModBlocks.LABORATORY_BLOCK.get());
                         pOutput.accept(ModItems.SAPPHIRE.get());
                     })
                     .build());

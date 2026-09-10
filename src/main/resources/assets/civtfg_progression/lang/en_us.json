@@ -1,5 +1,7 @@
 {
+  "creativetab.civtfg_progression_tab": "CivTFG Progression",
+
   "item.civtfg_progression.sapphire": "Sapphire",
 
-  "creativetab.civtfg_progression_tab": "CivTFG Tutorial Tab"
+  "block.civtfg_progression.laboratory_block": "Laboratory"
 }

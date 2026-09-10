@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "civtfg_progression:block/laboratory_block"
+    }
+  }
+}

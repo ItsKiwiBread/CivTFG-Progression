@@ -1,0 +1,13 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "civtfg_progression:block/laboratory_side",
+    "down": "civtfg_progression:block/laboratory_bottom",
+    "up": "civtfg_progression:block/laboratory_top",
+    "north": "civtfg_progression:block/laboratory_side",
+    "south": "civtfg_progression:block/laboratory_side",
+    "west": "civtfg_progression:block/laboratory_side",
+    "east": "civtfg_progression:block/laboratory_side"
+  }
+}
+

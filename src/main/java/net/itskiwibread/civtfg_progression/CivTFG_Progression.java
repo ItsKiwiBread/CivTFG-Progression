@@ -1,8 +1,11 @@
-package net.itskwibread.civtfg_progression;
+package net.itskiwibread.civtfg_progression;
 
 import com.mojang.logging.LogUtils;
-import net.itskwibread.civtfg_progression.item.ModCreativeModeTabs;
-import net.itskwibread.civtfg_progression.item.ModItems;
+import net.itskiwibread.civtfg_progression.Menu.ModMenuTypes;
+import net.itskiwibread.civtfg_progression.block.ModBlocks;
+import net.itskiwibread.civtfg_progression.block.entity.ModBlockEntities;
+import net.itskiwibread.civtfg_progression.item.ModCreativeModeTabs;
+import net.itskiwibread.civtfg_progression.item.ModItems;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -34,6 +37,9 @@ public class CivTFG_Progression
         ModCreativeModeTabs.register(modEventBus);
 
         ModItems.register(modEventBus);
+        ModBlocks.register(modEventBus);
+        ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
+        ModMenuTypes.MENUS.register(modEventBus);
 
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
@@ -53,9 +59,6 @@ public class CivTFG_Progression
 
     // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
-        if(event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
-        event.accept(ModItems.SAPPHIRE);
-        }
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
@@ -71,7 +74,6 @@ public class CivTFG_Progression
 
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-
 
         }
     }
