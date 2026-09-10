@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.itskiwibread.civtfg_progression.progression.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "civtfg_progression.refmap.json",
+
+  "mixins": [
+    "CraftingLockMixin"
+  ],
+
+  "client": [
+    "CraftingLockScreenMixin"
+  ],
+
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
