@@ -9,33 +9,62 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.PickaxeItem;
 
 public class LaboratoryMenu extends AbstractContainerMenu {
 
+    // =========================================================
+    // BLOCK ENTITY
+    // =========================================================
+
     private final LaboratoryBlockEntity blockEntity;
+
+    // =========================================================
+    // DATA
+    // =========================================================
 
     private final ContainerData data;
 
-    public LaboratoryMenu(int id, Inventory inventory, LaboratoryBlockEntity blockEntity) {
-        super(ModMenuTypes.LABORATORY_MENU.get(), id);
+    // =========================================================
+    // CONSTRUCTOR
+    // =========================================================
+
+    public LaboratoryMenu(
+            int id,
+            Inventory inventory,
+            LaboratoryBlockEntity blockEntity) {
+
+        super(
+                ModMenuTypes.LABORATORY_MENU.get(),
+                id
+        );
 
         this.blockEntity = blockEntity;
 
+        // -----------------------------------------------------
+        // Progress data
+        //
+        // 0 = consumption progress
+        // 1 = laboratory progress
+        // -----------------------------------------------------
+
         this.data = new ContainerData() {
 
-            private final int[] values = new int[4];
+            private final int[] values = new int[2];
 
             @Override
             public int get(int index) {
-                if (blockEntity.getLevel() != null &&
-                        !blockEntity.getLevel().isClientSide) {
+
+                if (blockEntity.getLevel() != null
+                        && !blockEntity.getLevel().isClientSide) {
 
                     return switch (index) {
-                        case 0 -> blockEntity.getConsumeProgress();
-                        case 1 -> blockEntity.getConsumeProgressMax();
-                        case 2 -> blockEntity.getLaboratoryProgress();
-                        case 3 -> blockEntity.getLaboratoryProgressMax();
+
+                        case 0 ->
+                                blockEntity.getConsumeProgress();
+
+                        case 1 ->
+                                blockEntity.getLaboratoryProgress();
+
                         default -> 0;
                     };
                 }
@@ -50,21 +79,62 @@ public class LaboratoryMenu extends AbstractContainerMenu {
 
             @Override
             public int getCount() {
-                return 4;
+                return 2;
             }
         };
-        // This is IMPORTANT
+
+        // IMPORTANT:
+        // Only add the data slots ONCE.
         addDataSlots(data);
 
         // =====================================================
         // LABORATORY INPUT SLOTS
         // =====================================================
 
-        addSlot(new LaboratorySlot(blockEntity, 0, 44, 31));
-        addSlot(new LaboratorySlot(blockEntity, 1, 62, 31));
-        addSlot(new LaboratorySlot(blockEntity, 2, 80, 31));
-        addSlot(new LaboratorySlot(blockEntity, 3, 98, 31));
-        addSlot(new LaboratorySlot(blockEntity, 4, 116, 31));
+        addSlot(
+                new LaboratorySlot(
+                        blockEntity,
+                        0,
+                        44,
+                        31
+                )
+        );
+
+        addSlot(
+                new LaboratorySlot(
+                        blockEntity,
+                        1,
+                        62,
+                        31
+                )
+        );
+
+        addSlot(
+                new LaboratorySlot(
+                        blockEntity,
+                        2,
+                        80,
+                        31
+                )
+        );
+
+        addSlot(
+                new LaboratorySlot(
+                        blockEntity,
+                        3,
+                        98,
+                        31
+                )
+        );
+
+        addSlot(
+                new LaboratorySlot(
+                        blockEntity,
+                        4,
+                        116,
+                        31
+                )
+        );
 
         // =====================================================
         // PLAYER INVENTORY
@@ -72,31 +142,36 @@ public class LaboratoryMenu extends AbstractContainerMenu {
 
         // Main inventory
         for (int row = 0; row < 3; row++) {
+
             for (int col = 0; col < 9; col++) {
-                addSlot(new Slot(
-                        inventory,
-                        col + row * 9 + 9,
-                        7 + col * 18,
-                        84 + row * 18
-                ));
+
+                addSlot(
+                        new Slot(
+                                inventory,
+                                col + row * 9 + 9,
+                                7 + col * 18,
+                                84 + row * 18
+                        )
+                );
             }
         }
 
         // Hotbar
         for (int col = 0; col < 9; col++) {
-            addSlot(new Slot(
-                    inventory,
-                    col,
-                    7 + col * 18,
-                    142
-            ));
-        }
 
-        addDataSlots(data);
+            addSlot(
+                    new Slot(
+                            inventory,
+                            col,
+                            7 + col * 18,
+                            142
+                    )
+            );
+        }
     }
 
     // =========================================================
-    // CLIENT CONSTRUCTOR
+    // CLIENT / NETWORK CONSTRUCTOR
     // =========================================================
 
     public static LaboratoryMenu fromNetwork(
@@ -104,8 +179,6 @@ public class LaboratoryMenu extends AbstractContainerMenu {
             Inventory inventory,
             FriendlyByteBuf buffer) {
 
-        // If you're using BlockEntityMenuProvider/network position,
-        // you can read the BlockPos here.
         return null;
     }
 
@@ -118,15 +191,15 @@ public class LaboratoryMenu extends AbstractContainerMenu {
     }
 
     public int getConsumeProgressMax() {
-        return data.get(1);
+        return blockEntity.getConsumeProgressMax();
     }
 
     public int getLaboratoryProgress() {
-        return data.get(2);
+        return data.get(1);
     }
 
     public int getLaboratoryProgressMax() {
-        return data.get(3);
+        return blockEntity.getLaboratoryProgressMax();
     }
 
     // =========================================================
@@ -134,7 +207,9 @@ public class LaboratoryMenu extends AbstractContainerMenu {
     // =========================================================
 
     @Override
-    public ItemStack quickMoveStack(Player player, int index) {
+    public ItemStack quickMoveStack(
+            Player player,
+            int index) {
 
         Slot slot = slots.get(index);
 
@@ -143,11 +218,13 @@ public class LaboratoryMenu extends AbstractContainerMenu {
         }
 
         ItemStack stack = slot.getItem();
+
         ItemStack copy = stack.copy();
 
         // Laboratory slots are 0-4
         if (index < 5) {
 
+            // Move laboratory item back to player inventory
             if (!moveItemStackTo(
                     stack,
                     5,
@@ -159,7 +236,7 @@ public class LaboratoryMenu extends AbstractContainerMenu {
 
         } else {
 
-            // Try to put into laboratory slots
+            // Try to move player item into laboratory
             if (!moveItemStackTo(
                     stack,
                     0,
@@ -171,13 +248,22 @@ public class LaboratoryMenu extends AbstractContainerMenu {
         }
 
         if (stack.isEmpty()) {
-            slot.set(ItemStack.EMPTY);
+
+            slot.set(
+                    ItemStack.EMPTY
+            );
+
         } else {
+
             slot.setChanged();
         }
 
         return copy;
     }
+
+    // =========================================================
+    // VALIDITY
+    // =========================================================
 
     @Override
     public boolean stillValid(Player player) {

@@ -1,39 +1,53 @@
 package net.itskiwibread.civtfg_progression.block.entity;
 
-import net.itskiwibread.civtfg_progression.Menu.ModMenuTypes;
 import net.itskiwibread.civtfg_progression.Menu.LaboratoryMenu;
+import net.itskiwibread.civtfg_progression.block.entity.ModBlockEntities;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class LaboratoryBlockEntity extends BlockEntity
-        implements MenuProvider, Container {
+        implements net.minecraft.world.MenuProvider, Container {
+
+    // =========================================================
+    // INVENTORY
+    // =========================================================
 
     // Five laboratory input slots
     private final ItemStack[] items = new ItemStack[5];
 
-    // How far the CURRENT item has been consumed
+    // =========================================================
+    // PROGRESS
+    // =========================================================
+
+    // Shared consumption progress
     private int consumeProgress = 0;
 
     // Overall laboratory progress
     private int laboratoryProgress = 0;
 
-    // How many ticks it takes to consume one item
+    // How many ticks it takes to consume one batch
     private static final int CONSUME_TIME = 100;
 
-    // Maximum overall progress
+    // Maximum laboratory progress
     private static final int MAX_PROGRESS = 100;
 
+    // =========================================================
+    // CONSTRUCTOR
+    // =========================================================
+
     public LaboratoryBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.LABORATORY_BLOCK_ENTITY.get(), pos, state);
+        super(net.itskiwibread.civtfg_progression.block.entity.ModBlockEntities.LABORATORY_BLOCK_ENTITY.get(), pos, state);
 
         for (int i = 0; i < items.length; i++) {
             items[i] = ItemStack.EMPTY;
@@ -44,68 +58,81 @@ public class LaboratoryBlockEntity extends BlockEntity
     // TICK
     // =========================================================
 
-    public void tick() {
+    public static void tick(
+            Level level,
+            BlockPos pos,
+            BlockState state,
+            LaboratoryBlockEntity entity) {
 
-        // Find an item to consume
-        int slot = getNextOccupiedSlot();
-
-        if (slot == -1) {
-            // Nothing to consume
-            consumeProgress = 0;
+        if (level.isClientSide) {
             return;
         }
 
-        ItemStack stack = items[slot];
+        // -----------------------------------------------------
+        // Check whether there is anything to consume
+        // -----------------------------------------------------
 
-        // Make sure the item is actually valid for this slot
-        if (!isItemValid(slot, stack)) {
-            consumeProgress = 0;
+        boolean hasItems = false;
+
+        for (int slot = 0; slot < 5; slot++) {
+
+            if (!entity.items[slot].isEmpty()
+                    && entity.isItemValid(slot, entity.items[slot])) {
+
+                hasItems = true;
+                break;
+            }
+        }
+
+        // Nothing to consume
+        if (!hasItems) {
+            entity.consumeProgress = 0;
+            entity.setChanged();
             return;
         }
 
-        // Advance consumption
-        consumeProgress++;
+        // -----------------------------------------------------
+        // Increase shared consumption progress
+        // -----------------------------------------------------
 
-        // Finished consuming one item
-        if (consumeProgress >= CONSUME_TIME) {
+        entity.consumeProgress++;
 
-            consumeProgress = 0;
+        // -----------------------------------------------------
+        // Consumption cycle completed
+        // -----------------------------------------------------
 
-            // Remove one item
-            stack.shrink(1);
+        if (entity.consumeProgress >= CONSUME_TIME) {
 
-            // Add progress to the second bar
-            laboratoryProgress++;
+            int itemsConsumed = 0;
 
-            // Mark block entity as changed
-            setChanged();
+            // Consume ONE item from EVERY occupied valid slot
+            for (int slot = 0; slot < 5; slot++) {
 
-            // If the laboratory is complete
-            if (laboratoryProgress >= MAX_PROGRESS) {
-                laboratoryProgress = 0;
+                if (!entity.items[slot].isEmpty()
+                        && entity.isItemValid(slot, entity.items[slot])) {
 
-                // TODO:
-                // Put your completed laboratory result here.
+                    entity.items[slot].shrink(1);
+
+                    itemsConsumed++;
+                }
             }
+
+            // -------------------------------------------------
+            // Add laboratory progress
+            // -------------------------------------------------
+
+            entity.laboratoryProgress += itemsConsumed;
+
+            // Prevent progress from exceeding maximum
+            if (entity.laboratoryProgress > MAX_PROGRESS) {
+                entity.laboratoryProgress = MAX_PROGRESS;
+            }
+
+            // Reset shared consumption timer
+            entity.consumeProgress = 0;
         }
 
-        setChanged();
-    }
-
-    // =========================================================
-    // FIND NEXT ITEM
-    // =========================================================
-
-    private int getNextOccupiedSlot() {
-
-        for (int i = 0; i < items.length; i++) {
-
-            if (!items[i].isEmpty() && isItemValid(i, items[i])) {
-                return i;
-            }
-        }
-
-        return -1;
+        entity.setChanged();
     }
 
     // =========================================================
@@ -120,10 +147,8 @@ public class LaboratoryBlockEntity extends BlockEntity
 
         return switch (slot) {
 
-            // Slot 0 = normal pickaxe
-            case 0 -> stack.getItem() instanceof net.minecraft.world.item.PickaxeItem
-                    && !(stack.getItem() instanceof net.minecraft.world.item.DiggerItem
-                    && stack.getItem() instanceof net.minecraft.world.item.PickaxeItem);
+            // Slot 0 = pickaxe
+            case 0 -> stack.getItem() instanceof net.minecraft.world.item.PickaxeItem;
 
             // Slot 1 = diamond pickaxe
             case 1 -> stack.is(net.minecraft.world.item.Items.DIAMOND_PICKAXE);
@@ -147,7 +172,9 @@ public class LaboratoryBlockEntity extends BlockEntity
 
     @Override
     public Component getDisplayName() {
-        return Component.translatable("block.civtfg_progression.laboratory");
+        return Component.translatable(
+                "container.civtfg_progression.laboratory"
+        );
     }
 
     @Override
@@ -164,7 +191,7 @@ public class LaboratoryBlockEntity extends BlockEntity
     }
 
     // =========================================================
-    // CONTAINER IMPLEMENTATION
+    // CONTAINER
     // =========================================================
 
     @Override
@@ -176,6 +203,7 @@ public class LaboratoryBlockEntity extends BlockEntity
     public boolean isEmpty() {
 
         for (ItemStack stack : items) {
+
             if (!stack.isEmpty()) {
                 return false;
             }
@@ -230,7 +258,10 @@ public class LaboratoryBlockEntity extends BlockEntity
             return false;
         }
 
-        return Container.stillValidBlockEntity(this, player);
+        return Container.stillValidBlockEntity(
+                this,
+                player
+        );
     }
 
     @Override
@@ -240,11 +271,131 @@ public class LaboratoryBlockEntity extends BlockEntity
             items[i] = ItemStack.EMPTY;
         }
 
+        consumeProgress = 0;
+
         setChanged();
     }
 
     // =========================================================
-    // PROGRESS
+    // SAVE
+    // =========================================================
+
+    @Override
+    protected void saveAdditional(CompoundTag tag) {
+
+        super.saveAdditional(tag);
+
+        // -----------------------------------------------------
+        // Save inventory
+        // -----------------------------------------------------
+
+        ListTag itemsTag = new ListTag();
+
+        for (int i = 0; i < items.length; i++) {
+
+            if (!items[i].isEmpty()) {
+
+                CompoundTag itemTag = new CompoundTag();
+
+                itemTag.putByte(
+                        "Slot",
+                        (byte) i
+                );
+
+                items[i].save(itemTag);
+
+                itemsTag.add(itemTag);
+            }
+        }
+
+        tag.put("Items", itemsTag);
+
+        // -----------------------------------------------------
+        // Save progress
+        // -----------------------------------------------------
+
+        tag.putInt(
+                "ConsumeProgress",
+                consumeProgress
+        );
+
+        tag.putInt(
+                "LaboratoryProgress",
+                laboratoryProgress
+        );
+    }
+
+    // =========================================================
+    // LOAD
+    // =========================================================
+
+    @Override
+    public void load(CompoundTag tag) {
+
+        super.load(tag);
+
+        // -----------------------------------------------------
+        // Clear inventory
+        // -----------------------------------------------------
+
+        for (int i = 0; i < items.length; i++) {
+            items[i] = ItemStack.EMPTY;
+        }
+
+        // -----------------------------------------------------
+        // Load inventory
+        // -----------------------------------------------------
+
+        ListTag itemsTag = tag.getList(
+                "Items",
+                Tag.TAG_COMPOUND
+        );
+
+        for (int i = 0; i < itemsTag.size(); i++) {
+
+            CompoundTag itemTag =
+                    itemsTag.getCompound(i);
+
+            int slot =
+                    itemTag.getByte("Slot") & 255;
+
+            if (slot >= 0 && slot < items.length) {
+
+                items[slot] =
+                        ItemStack.of(itemTag);
+            }
+        }
+
+        // -----------------------------------------------------
+        // Load progress
+        // -----------------------------------------------------
+
+        consumeProgress =
+                tag.getInt("ConsumeProgress");
+
+        laboratoryProgress =
+                tag.getInt("LaboratoryProgress");
+
+        // Safety
+        if (consumeProgress < 0) {
+            consumeProgress = 0;
+        }
+
+        if (consumeProgress > CONSUME_TIME) {
+            consumeProgress = CONSUME_TIME;
+        }
+
+        if (laboratoryProgress < 0) {
+            laboratoryProgress = 0;
+        }
+
+        if (laboratoryProgress > MAX_PROGRESS) {
+            laboratoryProgress = MAX_PROGRESS;
+        }
+    }
+
+    // =========================================================
+    // PROGRESS GETTERS
     // =========================================================
 
     public int getConsumeProgress() {

@@ -60,7 +60,8 @@ public class LaboratoryBlock extends BaseEntityBlock {
         return createTickerHelper(
                 type,
                 ModBlockEntities.LABORATORY_BLOCK_ENTITY.get(),
-                (level1, pos, state1, blockEntity) -> blockEntity.tick()
+                (level1, pos, state1, blockEntity) ->
+                        LaboratoryBlockEntity.tick(level1, pos, state1, blockEntity)
         );
     }
 
