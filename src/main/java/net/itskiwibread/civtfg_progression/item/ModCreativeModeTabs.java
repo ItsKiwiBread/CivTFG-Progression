@@ -19,7 +19,58 @@ public class ModCreativeModeTabs {
                     .title(Component.translatable("creativetab.civtfg_progression_tab"))
                     .displayItems((pParameters, pOutput) -> {
                         pOutput.accept(ModBlocks.LABORATORY_BLOCK.get());
+
                         pOutput.accept(ModItems.SAPPHIRE.get());
+
+                        pOutput.accept(ModItems.MINING_SCIENCE_BRONZE.get());
+                        pOutput.accept(ModItems.MINING_SCIENCE_IRON.get());
+                        pOutput.accept(ModItems.MINING_SCIENCE_STEEL.get());
+                        pOutput.accept(ModItems.MINING_SCIENCE_STEAM.get());
+                        pOutput.accept(ModItems.MINING_SCIENCE_LV.get());
+                        pOutput.accept(ModItems.MINING_SCIENCE_MV.get());
+                        pOutput.accept(ModItems.MINING_SCIENCE_HV.get());
+                        pOutput.accept(ModItems.MINING_SCIENCE_EV.get());
+                        pOutput.accept(ModItems.MINING_SCIENCE_IV.get());
+
+                        pOutput.accept(ModItems.FARMING_SCIENCE_BRONZE.get());
+                        pOutput.accept(ModItems.FARMING_SCIENCE_IRON.get());
+                        pOutput.accept(ModItems.FARMING_SCIENCE_STEEL.get());
+                        pOutput.accept(ModItems.FARMING_SCIENCE_STEAM.get());
+                        pOutput.accept(ModItems.FARMING_SCIENCE_LV.get());
+                        pOutput.accept(ModItems.FARMING_SCIENCE_MV.get());
+                        pOutput.accept(ModItems.FARMING_SCIENCE_HV.get());
+                        pOutput.accept(ModItems.FARMING_SCIENCE_EV.get());
+                        pOutput.accept(ModItems.FARMING_SCIENCE_IV.get());
+
+                        pOutput.accept(ModItems.PRODUCTION_SCIENCE_BRONZE.get());
+                        pOutput.accept(ModItems.PRODUCTION_SCIENCE_IRON.get());
+                        pOutput.accept(ModItems.PRODUCTION_SCIENCE_STEEL.get());
+                        pOutput.accept(ModItems.PRODUCTION_SCIENCE_STEAM.get());
+                        pOutput.accept(ModItems.PRODUCTION_SCIENCE_LV.get());
+                        pOutput.accept(ModItems.PRODUCTION_SCIENCE_MV.get());
+                        pOutput.accept(ModItems.PRODUCTION_SCIENCE_HV.get());
+                        pOutput.accept(ModItems.PRODUCTION_SCIENCE_EV.get());
+                        pOutput.accept(ModItems.PRODUCTION_SCIENCE_IV.get());
+
+                        pOutput.accept(ModItems.EXPLORATION_SCIENCE_BRONZE.get());
+                        pOutput.accept(ModItems.EXPLORATION_SCIENCE_IRON.get());
+                        pOutput.accept(ModItems.EXPLORATION_SCIENCE_STEEL.get());
+                        pOutput.accept(ModItems.EXPLORATION_SCIENCE_STEAM.get());
+                        pOutput.accept(ModItems.EXPLORATION_SCIENCE_LV.get());
+                        pOutput.accept(ModItems.EXPLORATION_SCIENCE_MV.get());
+                        pOutput.accept(ModItems.EXPLORATION_SCIENCE_HV.get());
+                        pOutput.accept(ModItems.EXPLORATION_SCIENCE_EV.get());
+                        pOutput.accept(ModItems.EXPLORATION_SCIENCE_IV.get());
+
+                        pOutput.accept(ModItems.CHALLENGE_SCIENCE_BRONZE.get());
+                        pOutput.accept(ModItems.CHALLENGE_SCIENCE_IRON.get());
+                        pOutput.accept(ModItems.CHALLENGE_SCIENCE_STEEL.get());
+                        pOutput.accept(ModItems.CHALLENGE_SCIENCE_STEAM.get());
+                        pOutput.accept(ModItems.CHALLENGE_SCIENCE_LV.get());
+                        pOutput.accept(ModItems.CHALLENGE_SCIENCE_MV.get());
+                        pOutput.accept(ModItems.CHALLENGE_SCIENCE_HV.get());
+                        pOutput.accept(ModItems.CHALLENGE_SCIENCE_EV.get());
+                        pOutput.accept(ModItems.CHALLENGE_SCIENCE_IV.get());
                     })
                     .build());
 
