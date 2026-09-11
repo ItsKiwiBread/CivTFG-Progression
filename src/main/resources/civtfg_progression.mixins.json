@@ -6,7 +6,8 @@
   "refmap": "civtfg_progression.refmap.json",
 
   "mixins": [
-    "CraftingLockMixin"
+    "CraftingLockMixin",
+    "PlayerInventoryMixin"
   ],
 
   "client": [

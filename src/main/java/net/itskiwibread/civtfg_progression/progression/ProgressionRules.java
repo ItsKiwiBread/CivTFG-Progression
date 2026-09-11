@@ -9,27 +9,30 @@ public final class ProgressionRules {
     }
 
     /*
+     * ============================================================
+     * TEST / SAFETY SETTINGS
+     * ============================================================
+     */
 
-============================================================
-TEST SWITCH
-============================================================*
-true:
-If a locked item somehow reaches the player's inventory,
-immediately remove it and drop it on the ground.*
-false:
-Do not perform the emergency inventory removal.*
-This makes testing the system much easier.*/
+    /*
+     * If true:
+     *
+     * Any locked progression item that somehow reaches a player's
+     * inventory is immediately removed and dropped.
+     *
+     * Set this to false when you want to test what happens without
+     * the emergency eject system.
+     */
     public static boolean DROP_FORBIDDEN_ITEMS = true;
 
 
     /*
-
-============================================================
-TEST PROGRESSION
-============================================================*
-Iron   -> Goal 1
-Gold   -> Goal 2
-Diamond -> Goal 3*/
+     * ============================================================
+     * TEST ITEM -> REQUIRED GOAL
+     * ============================================================
+     *
+     * -1 means "this item isn't progression locked".
+     */
 
     public static int requiredGoal(ItemStack stack) {
 
@@ -45,7 +48,27 @@ Diamond -> Goal 3*/
             return 3;
         }
 
-        // -1 = item isn't progression locked
         return -1;
+    }
+
+
+    /*
+     * ============================================================
+     * MESSAGE
+     * ============================================================
+     */
+
+    public static String lockedPickupMessage(int goal) {
+
+        return "§cYou cannot have this item yet! §7Complete Goal "
+                + goal
+                + ".";
+    }
+
+    public static String lockedUseMessage(int goal) {
+
+        return "§cYou cannot use this item yet! §7Complete Goal "
+                + goal
+                + ".";
     }
 }
