@@ -3,5 +3,7 @@
 
   "item.civtfg_progression.sapphire": "Sapphire",
 
-  "block.civtfg_progression.laboratory_block": "Laboratory"
+  "block.civtfg_progression.laboratory_block": "Laboratory",
+
+  "block.civtfg_progression.laboratory": "Laboratory"
 }
