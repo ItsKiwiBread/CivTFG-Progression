@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "civtfg_progression:item/challenge_science_iron"
+  }
+}

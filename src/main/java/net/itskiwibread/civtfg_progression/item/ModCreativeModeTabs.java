@@ -20,8 +20,6 @@ public class ModCreativeModeTabs {
                     .displayItems((pParameters, pOutput) -> {
                         pOutput.accept(ModBlocks.LABORATORY_BLOCK.get());
 
-                        pOutput.accept(ModItems.SAPPHIRE.get());
-
                         pOutput.accept(ModItems.MINING_SCIENCE_BRONZE.get());
                         pOutput.accept(ModItems.MINING_SCIENCE_IRON.get());
                         pOutput.accept(ModItems.MINING_SCIENCE_STEEL.get());
