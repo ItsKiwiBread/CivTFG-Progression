@@ -12,11 +12,10 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber
 public class ItemUseProtection {
 
-    /*
-     * ============================================================
-     * RIGHT CLICK ITEM
-     * ============================================================
-     */
+
+    // ============================================================
+    // RIGHT CLICK ITEM
+    // ============================================================
 
     @SubscribeEvent
     public static void onRightClickItem(
@@ -27,30 +26,24 @@ public class ItemUseProtection {
             return;
         }
 
-        if (isLocked(player, event.getItemStack())) {
+        InteractionHand hand =
+                event.getHand();
+
+        if (blockUse(
+                player,
+                hand,
+                event.getItemStack()
+        )) {
 
             event.setCanceled(true);
-
-            player.sendSystemMessage(
-                    Component.literal(
-                            ProgressionRules.lockedUseMessage(
-                                    requiredGoal(event.getItemStack())
-                            )
-                    )
-            );
         }
     }
 
 
-    /*
-     * ============================================================
-     * RIGHT CLICK BLOCK
-     * ============================================================
-     *
-     * This catches things such as:
-     *
-     * right-clicking a block with a locked item
-     */
+    // ============================================================
+    // RIGHT CLICK BLOCK
+    // ============================================================
+
     @SubscribeEvent
     public static void onRightClickBlock(
             PlayerInteractEvent.RightClickBlock event
@@ -60,27 +53,23 @@ public class ItemUseProtection {
             return;
         }
 
-        ItemStack stack =
-                event.getItemStack();
+        InteractionHand hand =
+                event.getHand();
 
-        if (isLocked(player, stack)) {
+        if (blockUse(
+                player,
+                hand,
+                event.getItemStack()
+        )) {
 
             event.setCanceled(true);
-
-            ProgressionMessage.sendUseBlocked(
-                    player,
-                    stack,
-                    requiredGoal(stack)
-            );
         }
     }
 
 
-    /*
-     * ============================================================
-     * RIGHT CLICK ENTITY
-     * ============================================================
-     */
+    // ============================================================
+    // RIGHT CLICK ENTITY
+    // ============================================================
 
     @SubscribeEvent
     public static void onEntityInteract(
@@ -91,31 +80,24 @@ public class ItemUseProtection {
             return;
         }
 
-        ItemStack stack =
-                event.getItemStack();
+        InteractionHand hand =
+                event.getHand();
 
-        if (isLocked(player, stack)) {
+        if (blockUse(
+                player,
+                hand,
+                event.getItemStack()
+        )) {
 
             event.setCanceled(true);
-
-            player.sendSystemMessage(
-                    Component.literal(
-                            ProgressionRules.lockedUseMessage(
-                                    requiredGoal(stack)
-                            )
-                    )
-            );
         }
     }
 
 
-    /*
-     * ============================================================
-     * RIGHT CLICK ENTITY - SPECIFIC
-     * ============================================================
-     *
-     * Some entity interactions use EntityInteractSpecific first.
-     */
+    // ============================================================
+    // SPECIFIC ENTITY INTERACTION
+    // ============================================================
+
     @SubscribeEvent
     public static void onEntityInteractSpecific(
             PlayerInteractEvent.EntityInteractSpecific event
@@ -125,31 +107,24 @@ public class ItemUseProtection {
             return;
         }
 
-        ItemStack stack =
-                event.getItemStack();
+        InteractionHand hand =
+                event.getHand();
 
-        if (isLocked(player, stack)) {
+        if (blockUse(
+                player,
+                hand,
+                event.getItemStack()
+        )) {
 
             event.setCanceled(true);
-
-            player.sendSystemMessage(
-                    Component.literal(
-                            ProgressionRules.lockedUseMessage(
-                                    requiredGoal(stack)
-                            )
-                    )
-            );
         }
     }
 
 
-    /*
-     * ============================================================
-     * ATTACK ENTITY
-     * ============================================================
-     *
-     * Prevents using a locked tool as a weapon.
-     */
+    // ============================================================
+    // ATTACK ENTITY
+    // ============================================================
+
     @SubscribeEvent
     public static void onAttackEntity(
             AttackEntityEvent event
@@ -159,44 +134,107 @@ public class ItemUseProtection {
             return;
         }
 
+        InteractionHand hand =
+                InteractionHand.MAIN_HAND;
+
         ItemStack stack =
-                player.getItemInHand(InteractionHand.MAIN_HAND);
+                player.getItemInHand(hand);
 
-        if (isLocked(player, stack)) {
+        if (!shouldBlock(
+                player,
+                stack
+        )) {
 
-            event.setCanceled(true);
-
-            player.sendSystemMessage(
-                    Component.literal(
-                            ProgressionRules.lockedUseMessage(
-                                    requiredGoal(stack)
-                            )
-                    )
-            );
+            return;
         }
+
+        int goal =
+                ProgressionRules.requiredGoal(stack);
+
+        ProgressionMessage.sendUseBlocked(
+                player,
+                stack,
+                goal
+        );
+
+        dropAndCancel(
+                player,
+                hand,
+                stack
+        );
+
+        event.setCanceled(true);
     }
 
 
-    /*
-     * ============================================================
-     * HELPER
-     * ============================================================
-     */
+    // ============================================================
+    // COMMON RIGHT-CLICK LOGIC
+    // ============================================================
 
-    private static boolean isLocked(
+    private static boolean blockUse(
+            ServerPlayer player,
+            InteractionHand hand,
+            ItemStack stack
+    ) {
+
+        if (!shouldBlock(
+                player,
+                stack
+        )) {
+
+            return false;
+        }
+
+        int goal =
+                ProgressionRules.requiredGoal(stack);
+
+        ProgressionMessage.sendUseBlocked(
+                player,
+                stack,
+                goal
+        );
+
+        dropAndCancel(
+                player,
+                hand,
+                stack
+        );
+
+        return true;
+    }
+
+
+    // ============================================================
+    // SHOULD BLOCK?
+    // ============================================================
+
+    private static boolean shouldBlock(
             ServerPlayer player,
             ItemStack stack
     ) {
 
+        if (stack.isEmpty()) {
+            return false;
+        }
+
+        /*
+         * Item isn't configured to be use-blocked.
+         */
+        if (!ProgressionRules.shouldBlockUse(stack)) {
+            return false;
+        }
+
         int goal =
-                requiredGoal(stack);
+                ProgressionRules.requiredGoal(stack);
 
         if (goal == -1) {
             return false;
         }
 
         ProgressionManager progression =
-                ProgressionManager.get(player.getServer());
+                ProgressionManager.get(
+                        player.getServer()
+                );
 
         return !progression.hasGoal(
                 player,
@@ -205,7 +243,39 @@ public class ItemUseProtection {
     }
 
 
-    private static int requiredGoal(ItemStack stack) {
-        return ProgressionRules.requiredGoal(stack);
+    // ============================================================
+    // DROP ITEM
+    // ============================================================
+
+    private static void dropAndCancel(
+            ServerPlayer player,
+            InteractionHand hand,
+            ItemStack currentStack
+    ) {
+
+        /*
+         * The JSON lets you disable dropping independently.
+         */
+        if (!ProgressionRules
+                .shouldDropOnBlockedUse(currentStack)) {
+
+            return;
+        }
+
+        ItemStack dropped =
+                currentStack.copy();
+
+        /*
+         * Drop the entire held stack.
+         */
+        player.setItemInHand(
+                hand,
+                ItemStack.EMPTY
+        );
+
+        player.drop(
+                dropped,
+                false
+        );
     }
 }

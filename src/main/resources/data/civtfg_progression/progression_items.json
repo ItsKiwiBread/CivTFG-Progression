@@ -1,0 +1,27 @@
+{
+  "items": {
+    "minecraft:iron_pickaxe": {
+      "goal": 1,
+      "block_use": true,
+      "drop_on_blocked_use": true
+    },
+
+    "minecraft:golden_pickaxe": {
+      "goal": 2,
+      "block_use": true,
+      "drop_on_blocked_use": true
+    },
+
+    "minecraft:diamond_pickaxe": {
+      "goal": 3,
+      "block_use": true,
+      "drop_on_blocked_use": true
+    },
+
+    "minecraft:flint_and_steel": {
+      "goal": 1,
+      "block_use": true,
+      "drop_on_blocked_use": true
+    }
+  }
+}
